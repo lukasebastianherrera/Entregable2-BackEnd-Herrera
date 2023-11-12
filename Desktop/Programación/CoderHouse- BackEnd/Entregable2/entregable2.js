@@ -1,23 +1,48 @@
+const fs = require("fs");
+
 class ProductManager {
     
-    constructor() {
-        this.products = [];
+    constructor(path) {
+        this.path = path; 
+        if(fs.existsSync(path)){
+            try{
+                let products = fs.readFileSync(path, "utf-8");
+                this.products = JSON.parse(products);
+            } catch(error) {
+                this.products = [];
+            }
+        } else {
+            this.products = []
+        }
         this.IdActual = 1;
     }
-
+    async saveFile(data){
+        try{
+            await fs.promises.writeFile(this.path, JSON.stringify(data, null, "\t"))
+            return true; 
+        } catch(error){
+            console.log(error)
+            return false;
+        }
+    }
     getProducts(){
-        return this.products;
+        console.log(this.products)
+        return this.products || [];
     }
 
     addProduct(title, description, price, thumbnail, code, stock){
         if (!title || !description || !price || !thumbnail || !code || !stock) {
             console.log("Falta rellenar un dato");
-            return;
         }
         if (this.products.some((product) => product.code === code)) {
             console.log("Error: El campo code se repite");
-            return;
         }
+        if (this.products.length === 0) {
+            products.id = 1; 
+        } else {
+            products.id = this.products[this.products.length - 1].id + 1;  
+        }
+        
     const producto = {
         id: this.IdActual++,
         title,
@@ -28,6 +53,7 @@ class ProductManager {
         stock,
     }
     this.products.push(producto);
+    this.saveFile(this.products);
     }
     
 
@@ -40,15 +66,12 @@ class ProductManager {
         }
     return product; 
     }
+    updateProduct(id){
+
+    }
 }
 
-const productManager = new ProductManager();
+const productManager = new ProductManager("./Productos.json");
 const products = productManager.getProducts();
     console.log(products)
-productManager.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", "abc123", 25);
-const nuevosProductos = productManager.getProducts(); 
-    console.log(nuevosProductos)
-productManager.addProduct("producto prueba", "Este es un producto prueba", 200, "Sin imagen", "abc123", 25);
-const productoID = productManager.getProductById(2);
-console.log(productoID)
-console.log("funciona node")
+productManager.addProduct("producto prueba1", "Este es un producto prueba", 200, "Sin imagen", "abc123", 25);
