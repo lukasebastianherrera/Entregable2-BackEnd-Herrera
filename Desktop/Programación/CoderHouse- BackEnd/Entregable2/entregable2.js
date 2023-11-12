@@ -25,6 +25,15 @@ class ProductManager {
         code,
         stock,
     };
+    const productCodeRepetido = products.some((product) => product.code === code);
+    if (productCodeRepetido) {
+        console.log(`EL CAMPO DE  ${code} SE REPITE `);
+        return;
+    }
+    if (!title || !description || !price || !thumbnail || !code || !stock) {
+        console.log("Falta rellenar un ");
+        return;
+    }
     products.push(product);
     fs.writeFileSync(this.path, JSON.stringify(products, null, "\t"));
     console.log(`Producto con id: ${id} se añadio`);
